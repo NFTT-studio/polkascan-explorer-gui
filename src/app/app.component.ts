@@ -99,43 +99,9 @@ export class AppComponent implements OnInit, OnDestroy {
         .all({ remotefilter: { visible: true } })
         .subscribe((networks) => {
           this.networks = networks;
+	  console.log(JSON.stringify(this.networks))
         });
-    } else {
-      this.networks = {
-        meta: {
-          authors: ["WEB3SCAN", "POLKASCAN", "openAware BV"],
-        },
-        errors: [],
-        data: [
-          {
-            attributes: {
-              name: "Polkadot",
-              network_id: "polkadot",
-              network_type: "pre",
-              chain_type: "relay",
-              api_url_root: "https://explorer-32.polkascan.io/api/v1/polkadot",
-              color_code: "e6007a",
-              token_decimals: 10,
-              token_symbol: "DOT",
-            },
-          },
-          {
-            attributes: {
-              name: "Kusama",
-              network_id: "kusama",
-              network_type: "pre",
-              chain_type: "relay",
-              api_url_root: "https://explorer-32.polkascan.io/api/v1/kusama",
-              color_code: "000000",
-              token_decimals: 12,
-              token_symbol: "KSM",
-            },
-          },
-        ],
-        links: {},
-      };
     }
-
     this.showLegalMessage = !this.appConfigService.getAgreeWithTerms();
 
     this.networkSubscription = this.appConfigService
