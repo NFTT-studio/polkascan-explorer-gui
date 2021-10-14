@@ -126,7 +126,6 @@ export class AppComponent implements OnInit, OnDestroy {
           },
           {
             attributes: {
-              id: 1,
               name: "Kusama",
               network_id: "kusama",
               network_type: "pre",
