@@ -108,10 +108,7 @@ export class AppComponent implements OnInit, OnDestroy {
         errors: [],
         data: [
           {
-            type: "network",
-            id: "polkadot",
             attributes: {
-              id: 4,
               name: "Polkadot",
               network_id: "polkadot",
               network_type: "pre",
@@ -128,8 +125,6 @@ export class AppComponent implements OnInit, OnDestroy {
             },
           },
           {
-            type: "network",
-            id: "kusama",
             attributes: {
               id: 1,
               name: "Kusama",
