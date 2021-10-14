@@ -20,31 +20,50 @@
  * app.component.ts
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, ParamMap, Router} from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import {NetworkService} from './services/network.service';
-import {DocumentCollection} from 'ngx-jsonapi';
-import {Network} from './classes/network.class';
-import {AppConfigService} from './services/app-config.service';
-import {delay, switchMap} from 'rxjs/operators';
-import {Subscription} from 'rxjs';
-import { Angulartics2GoogleGlobalSiteTag } from 'angulartics2/gst';
-import {environment} from '../environments/environment';
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  ParamMap,
+  Router,
+} from "@angular/router";
+import { TranslateService } from "@ngx-translate/core";
+import { NetworkService } from "./services/network.service";
+import { DocumentCollection } from "ngx-jsonapi";
+import { Network } from "./classes/network.class";
+import { AppConfigService } from "./services/app-config.service";
+import { delay, switchMap } from "rxjs/operators";
+import { Subscription } from "rxjs";
+import { Angulartics2GoogleGlobalSiteTag } from "angulartics2/gst";
+import { environment } from "../environments/environment";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'Polkascan';
+  title = "Polkascan";
 
   public currentNetwork;
   public showNavigation = false;
   public showSubmenus = true;
-  public langs = ['en', 'zh', 'ko', 'ja', 'es', 'de', 'ru', 'uk', 'hi', 'pt', 'fr', 'tr', 'th'];
-  public selectedLanguage = 'en';
+  public langs = [
+    "en",
+    "zh",
+    "ko",
+    "ja",
+    "es",
+    "de",
+    "ru",
+    "uk",
+    "hi",
+    "pt",
+    "fr",
+    "tr",
+    "th",
+  ];
+  public selectedLanguage = "en";
 
   public networks: DocumentCollection<Network>;
 
@@ -61,31 +80,88 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {
     angulartics.startTracking();
     router.events.subscribe((val) => {
-        this.showNavigation = false;
+      this.showNavigation = false;
     });
     translate.addLangs(this.langs);
-    translate.setDefaultLang('en');
+    translate.setDefaultLang("en");
 
-    this.selectedLanguage = translate.getBrowserLang().match(/en|zh|ko|de|ru|uk|hi|pt|fr|ja|tr|th|es/) ? translate.getBrowserLang() : 'en';
+    this.selectedLanguage = translate
+      .getBrowserLang()
+      .match(/en|zh|ko|de|ru|uk|hi|pt|fr|ja|tr|th|es/)
+      ? translate.getBrowserLang()
+      : "en";
     translate.use(this.selectedLanguage);
   }
 
   ngOnInit() {
-
     if (environment.jsonApiDiscoveryRootUrl) {
-      this.networkService.all({remotefilter: {visible: true}}).subscribe(networks => {
-        this.networks = networks;
-      });
+      this.networkService
+        .all({ remotefilter: { visible: true } })
+        .subscribe((networks) => {
+          this.networks = networks;
+        });
+    } else {
+      this.networks = {
+        meta: {
+          authors: ["WEB3SCAN", "POLKASCAN", "openAware BV"],
+        },
+        errors: [],
+        data: [
+          {
+            type: "network",
+            id: "polkadot",
+            attributes: {
+              id: 4,
+              name: "Polkadot",
+              network_id: "polkadot",
+              network_type: "pre",
+              chain_type: "relay",
+              api_url_root: "https://explorer-32.polkascan.io/api/v1/polkadot",
+              harvester_api_url_root:
+                "https://harvester-32.polkascan.io/polkadot/api/v1",
+              color_code: "e6007a",
+              token_decimals: 10,
+              token_symbol: "DOT",
+              sortorder: 0,
+              active: true,
+              visible: true,
+            },
+          },
+          {
+            type: "network",
+            id: "kusama",
+            attributes: {
+              id: 1,
+              name: "Kusama",
+              network_id: "kusama",
+              network_type: "pre",
+              chain_type: "relay",
+              api_url_root: "https://explorer-32.polkascan.io/api/v1/kusama",
+              harvester_api_url_root:
+                "https://harvester-32.polkascan.io/kusama/api/v1",
+              color_code: "000000",
+              token_decimals: 12,
+              token_symbol: "KSM",
+              sortorder: 1,
+              active: true,
+              visible: true,
+            },
+          },
+        ],
+        links: {},
+      };
     }
 
     this.showLegalMessage = !this.appConfigService.getAgreeWithTerms();
 
-    this.networkSubscription = this.appConfigService.getCurrentNetwork().pipe(delay(0)).subscribe( network => {
-      if (network) {
-        this.currentNetwork = network;
-      }
-    });
-
+    this.networkSubscription = this.appConfigService
+      .getCurrentNetwork()
+      .pipe(delay(0))
+      .subscribe((network) => {
+        if (network) {
+          this.currentNetwork = network;
+        }
+      });
   }
 
   agreeTerms() {
@@ -107,46 +183,48 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleSubmenus() {
     this.showSubmenus = false;
-    setTimeout(() => { this.showSubmenus = true; }, 300);
+    setTimeout(() => {
+      this.showSubmenus = true;
+    }, 300);
   }
 
   langsTitle(selectedLang: string) {
     switch (selectedLang) {
-      case 'de':
-        return 'Deutsch';
-      case 'fr':
-        return 'Français';
-      case 'it':
-        return 'Italiano';
-      case 'es':
-        return 'Español';
-      case 'zh':
-        return '简体中文';
-      case 'ja':
-        return '日本語';
-      case 'ko':
-        return '한국어';
-      case 'nl':
-        return 'Nederlands';
-      case 'pt':
-        return 'Português';
-      case 'ru':
-        return 'Русский';
-      case 'th':
-        return 'ภาษาไทย';
-      case 'tr':
-        return 'Türkçe';
-      case 'uk':
-        return 'Українська';
-      case 'hi':
-        return 'हिन्दी';
+      case "de":
+        return "Deutsch";
+      case "fr":
+        return "Français";
+      case "it":
+        return "Italiano";
+      case "es":
+        return "Español";
+      case "zh":
+        return "简体中文";
+      case "ja":
+        return "日本語";
+      case "ko":
+        return "한국어";
+      case "nl":
+        return "Nederlands";
+      case "pt":
+        return "Português";
+      case "ru":
+        return "Русский";
+      case "th":
+        return "ภาษาไทย";
+      case "tr":
+        return "Türkçe";
+      case "uk":
+        return "Українська";
+      case "hi":
+        return "हिन्दी";
       default:
-        return 'English';
+        return "English";
     }
   }
 
-   ngOnDestroy() {
-      // unsubscribe to ensure no memory leaks
-      this.networkSubscription.unsubscribe();
+  ngOnDestroy() {
+    // unsubscribe to ensure no memory leaks
+    this.networkSubscription.unsubscribe();
   }
 }
